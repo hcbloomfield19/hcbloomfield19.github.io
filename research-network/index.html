@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Research Network</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6fa;
+    color: #202b3c;
+  }
+
+  header {
+    padding: 40px 20px;
+    text-align: center;
+    background: #172b4d;
+    color: white;
+  }
+
+  header h1 { margin: 0 0 10px; }
+  header p { margin: 0; color: #d6e0f0; }
+
+  main {
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 0 20px;
+  }
+
+  #search {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    margin-bottom: 24px;
+    border: 1px solid #ccd3df;
+    border-radius: 8px;
+    font-size: 16px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    background: white;
+    padding: 22px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px #182c4a12;
+    border: 1px solid #e4e8ef;
+  }
+
+  .avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #dce8fb;
+    color: #244b85;
+    display: grid;
+    place-items: center;
+    font-weight: bold;
+    font-size: 18px;
+  }
+
+  .card h2 { font-size: 19px; margin-bottom: 6px; }
+  .role { color: #52647d; font-size: 14px; }
+  .institution { font-weight: bold; font-size: 14px; }
+
+  .tag {
+    display: inline-block;
+    margin: 4px 3px 0 0;
+    padding: 5px 8px;
+    border-radius: 5px;
+    background: #edf2fa;
+    color: #294c7c;
+    font-size: 12px;
+  }
+
+  #status { margin: 16px 0; color: #52647d; }
+
+  @media (max-width: 500px) {
+    header { padding: 30px 16px; }
+    main { padding: 0 14px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Research Network</h1>
+  <p>Meet our researchers and explore their work.</p>
+</header>
+
+<main>
+  <input id="search" type="search"
+    placeholder="Search names, institutions or interests..."
+    aria-label="Search researchers">
+  <p id="status" aria-live="polite">Loading researchers...</p>
+  <section class="grid" id="people"></section>
+</main>
+
+<script>
+function parseCSV(text) {
+  const rows = [];
+  let row = [], field = "", quoted = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+
+    if (c === '"' && quoted && text[i + 1] === '"') {
+      field += '"';
+      i++;
+    } else if (c === '"') {
+      quoted = !quoted;
+    } else if (c === ',' && !quoted) {
+      row.push(field);
+      field = "";
+    } else if ((c === '\n' || c === '\r') && !quoted) {
+      if (c === '\r' && text[i + 1] === '\n') i++;
+      row.push(field);
+      if (row.some(value => value.trim() !== "")) rows.push(row);
+      row = [];
+      field = "";
+    } else {
+      field += c;
+    }
+  }
+
+  if (field || row.length) {
+    row.push(field);
+    rows.push(row);
+  }
+
+  const headers = rows.shift().map(h => h.trim());
+  return rows.map(values =>
+    Object.fromEntries(headers.map((h, i) =>
+      [h, (values[i] || "").trim()]
+    ))
+  );
+}
+
+let researchers = [];
+
+function renderPeople(query = "") {
+  const container = document.getElementById("people");
+  const status = document.getElementById("status");
+  container.replaceChildren();
+
+  const filtered = researchers.filter(person =>
+    Object.values(person).join(" ")
+      .toLowerCase().includes(query.toLowerCase())
+  );
+
+  status.textContent = `${filtered.length} researcher(s) found`;
+
+  filtered.forEach(person => {
+    const card = document.createElement("article");
+    card.className = "card";
+
+    const avatar = document.createElement("div");
+    avatar.className = "avatar";
+    avatar.textContent = person.name
+      .split(/\s+/)
+      .map(word => word[0] || "")
+      .slice(0, 2).join("");
+
+    const name = document.createElement("h2");
+    name.textContent = person.name;
+
+    const role = document.createElement("p");
+    role.className = "role";
+    role.textContent = person.role;
+
+    const institution = document.createElement("p");
+    institution.className = "institution";
+    institution.textContent = person.institution;
+
+    const bio = document.createElement("p");
+    bio.textContent = person.bio;
+
+    card.append(avatar, name, role, institution, bio);
+
+    person.interests.split(";").forEach(interest => {
+      const tag = document.createElement("span");
+      tag.className = "tag";
+      tag.textContent = interest.trim();
+      card.append(tag);
+    });
+
+    container.append(card);
+  });
+}
+
+fetch("/research-network/people.csv")
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    return response.text();
+  })
+  .then(csv => {
+    console.log("CSV loaded:", csv.slice(0, 200));
+
+    researchers = parseCSV(csv);
+    console.log("Researchers parsed:", researchers);
+
+    if (!researchers.length) {
+      throw new Error("CSV loaded, but no researcher rows were found.");
+    }
+
+    renderPeople();
+  })
+  .catch(error => {
+    console.error("Research directory error:", error);
+
+    document.getElementById("status").textContent =
+      `Could not load researchers: ${error.message}`;
+  });
+
+document.getElementById("search").addEventListener("input", event => {
+  renderPeople(event.target.value);
+});
+</script>
+</body>
+</html>
