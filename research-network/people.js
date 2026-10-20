@@ -15,7 +15,8 @@ const researchers = [
         availableToMentor: true,
         lookingForMentor: false,
         lookingForSTSM: false,
-        availableToHostSTSM: true
+        availableToHostSTSM: true,
+	workingGroups: ["WG1", "WG2", "WG3", "WG4","WG5"]
     },
 
     {
@@ -33,7 +34,8 @@ const researchers = [
         availableToMentor: false,
         lookingForMentor: true,
         lookingForSTSM: true,
-        availableToHostSTSM: false
+        availableToHostSTSM: false,
+	workingGroups: ["WG1", "WG2", "WG3", "WG4","WG5"]
     },
 
     {
@@ -51,7 +53,8 @@ const researchers = [
         availableToMentor: false,
         lookingForMentor: false,
         lookingForSTSM: false,
-        availableToHostSTSM: false
+        availableToHostSTSM: false,
+	workingGroups: ["WG5"]
     },
 
     {
@@ -69,7 +72,8 @@ const researchers = [
         availableToMentor: true,
         lookingForMentor: false,
         lookingForSTSM: false,
-        availableToHostSTSM: true
+        availableToHostSTSM: true,
+	workingGroups: ["WG1", "WG2", "WG3", "WG4","WG5"]
     },
 
     {
@@ -87,7 +91,8 @@ const researchers = [
         availableToMentor: true,
         lookingForMentor: false,
         lookingForSTSM: true,
-        availableToHostSTSM: true
+        availableToHostSTSM: true,
+	workingGroups: ["WG5"]
     },
 
     {
@@ -105,7 +110,8 @@ const researchers = [
         availableToMentor: true,
         lookingForMentor: false,
         lookingForSTSM: false,
-        availableToHostSTSM: true
+        availableToHostSTSM: true,
+	workingGroups: ["WG1", "WG2", "WG4"]
     },
 
     {
@@ -123,7 +129,8 @@ const researchers = [
         availableToMentor: true,
         lookingForMentor: false,
         lookingForSTSM: false,
-        availableToHostSTSM: true
+        availableToHostSTSM: true,
+	workingGroups: ["WG1", "WG2", "WG4"]
     },
 
     {
@@ -141,7 +148,8 @@ const researchers = [
         availableToMentor: true,
         lookingForMentor: false,
         lookingForSTSM: false,
-        availableToHostSTSM: true
+        availableToHostSTSM: true,
+	workingGroups: ["WG1", "WG2", "WG4","WG5"]
     },
 
     {
@@ -159,7 +167,8 @@ const researchers = [
         availableToMentor: true,
         lookingForMentor: false,
         lookingForSTSM: true,
-        availableToHostSTSM: true
+        availableToHostSTSM: true,
+	workingGroups: ["WG1", "WG2", "WG3"]
     },
 
     {
@@ -177,7 +186,8 @@ const researchers = [
         availableToMentor: true,
         lookingForMentor: false,
         lookingForSTSM: false,
-        availableToHostSTSM: true
+        availableToHostSTSM: true,
+	workingGroups: ["WG3", "WG4","WG5"]
     },
 
     {
@@ -195,7 +205,8 @@ const researchers = [
         availableToMentor: true,
         lookingForMentor: false,
         lookingForSTSM: true,
-        availableToHostSTSM: true
+        availableToHostSTSM: true,
+	workingGroups: ["WG3", "WG4","WG5"]
     },
 
     {
@@ -213,7 +224,8 @@ const researchers = [
         availableToMentor: true,
         lookingForMentor: false,
         lookingForSTSM: false,
-        availableToHostSTSM: true
+        availableToHostSTSM: true,
+	workingGroups: ["WG1", "WG2", "WG3", "WG4","WG5"]
     },
 
     {
@@ -231,7 +243,9 @@ const researchers = [
         availableToMentor: true,
         lookingForMentor: false,
         lookingForSTSM: true,
-        availableToHostSTSM: true
+        availableToHostSTSM: true,
+	workingGroups: ["WG4","WG5"]
+
     },
 
     {
@@ -249,7 +263,8 @@ const researchers = [
         availableToMentor: true,
         lookingForMentor: false,
         lookingForSTSM: false,
-        availableToHostSTSM: true
+        availableToHostSTSM: true,
+	workingGroups: ["WG4","WG5"]
     },
 
     {
@@ -267,7 +282,8 @@ const researchers = [
         availableToMentor: true,
         lookingForMentor: false,
         lookingForSTSM: true,
-        availableToHostSTSM: true
+        availableToHostSTSM: true,
+	workingGroups: ["WG1", "WG2","WG5"]
     },
 
     {
@@ -285,7 +301,8 @@ const researchers = [
         availableToMentor: true,
         lookingForMentor: false,
         lookingForSTSM: false,
-        availableToHostSTSM: true
+        availableToHostSTSM: true,
+	workingGroups: ["WG1", "WG2", "WG3", "WG4","WG5"]
     },
 
     {
@@ -303,7 +320,8 @@ const researchers = [
         availableToMentor: true,
         lookingForMentor: false,
         lookingForSTSM: false,
-        availableToHostSTSM: false
+        availableToHostSTSM: false,
+	workingGroups: ["WG2", "WG4"]
     },
 
     {
@@ -321,7 +339,8 @@ const researchers = [
         availableToMentor: true,
         lookingForMentor: false,
         lookingForSTSM: true,
-        availableToHostSTSM: true
+        availableToHostSTSM: true,
+	workingGroups: ["WG5"]
     },
 
     {
@@ -339,7 +358,8 @@ const researchers = [
         availableToMentor: true,
         lookingForMentor: false,
         lookingForSTSM: true,
-        availableToHostSTSM: false
+        availableToHostSTSM: false,
+	workingGroups: ["WG5"]
     },
 
 
@@ -362,7 +382,8 @@ const researchers = [
         availableToMentor: false,
         lookingForMentor: true,
         lookingForSTSM: true,
-        availableToHostSTSM: false
+        availableToHostSTSM: false,
+	workingGroups: ["WG1"]
     }
 
 ];

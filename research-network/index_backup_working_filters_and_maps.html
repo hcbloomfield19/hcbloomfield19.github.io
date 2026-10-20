@@ -197,6 +197,41 @@
         .clear-filters { background: #eeeeee; color: #444444; }
 
 
+        /* =========================================
+           RESEARCH NETWORK MAP
+        ========================================= */
+
+        .network-map-section {
+            margin: 12px 0 32px;
+            padding: 20px;
+            background: #f7f7f7;
+            border-radius: 10px;
+        }
+
+        .network-map-section h2 {
+            margin: 0 0 4px;
+            font-size: 20px;
+            color: #222222;
+        }
+
+        .network-map-section p {
+            margin: 0 0 12px;
+            color: #666666;
+            font-size: 13px;
+        }
+
+        #research-map {
+            width: 100%;
+            height: 430px;
+        }
+
+        @media (max-width: 700px) {
+            #research-map {
+                height: 300px;
+            }
+        }
+
+
         #result-count {
             color: #777777;
 
@@ -537,6 +572,13 @@
         <p id="result-count"></p>
 
 
+        <section class="network-map-section" aria-labelledby="research-map-title">
+            <h2 id="research-map-title">ANTICIPATE network around the world</h2>
+            <p>Hover over a country to see how many members are represented then search the directory to find them.</p>
+            <div id="research-map" aria-label="World map showing the number of researchers by country"></div>
+        </section>
+
+
         <div id="people"></div>
 
 
@@ -546,6 +588,12 @@
     <!-- =========================================
          LOAD RESEARCHER DATA
     ========================================== -->
+
+
+    <!-- World map library -->
+    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/geodata/worldLow.js"></script>
 
     <script src="people.js"></script>
 
@@ -813,6 +861,90 @@
 
 };
 
+
+
+        /* =========================================
+           WORLD MAP - RESEARCHERS BY COUNTRY
+        ========================================== */
+
+        function createResearchMap() {
+
+            if (typeof am5 === "undefined" ||
+                typeof am5map === "undefined" ||
+                typeof am5geodata_worldLow === "undefined") {
+                return;
+            }
+
+            const counts = {};
+
+            researchers.forEach(function(person) {
+                let code = countryCodes[String(person.country || "").trim()];
+
+                if (!code) {
+                    return;
+                }
+
+                /* England, Scotland, Wales and Northern Ireland
+                   are shown together as the United Kingdom. */
+                if (code.indexOf("gb-") === 0) {
+                    code = "gb";
+                }
+
+                code = code.toUpperCase();
+                counts[code] = (counts[code] || 0) + 1;
+            });
+
+            const root = am5.Root.new("research-map");
+
+            const chart = root.container.children.push(
+                am5map.MapChart.new(root, {
+                    panX: "none",
+                    panY: "none",
+                    wheelX: "none",
+                    wheelY: "none",
+                    projection: am5map.geoNaturalEarth1()
+                })
+            );
+
+            const polygonSeries = chart.series.push(
+                am5map.MapPolygonSeries.new(root, {
+                    geoJSON: am5geodata_worldLow,
+                    exclude: ["AQ"],
+                    valueField: "value",
+                    calculateAggregates: true
+                })
+            );
+
+            polygonSeries.mapPolygons.template.setAll({
+                tooltipText: "{name}: {value} members",
+                fill: am5.color(0xdddddd),
+                stroke: am5.color(0xffffff),
+                strokeWidth: 0.7,
+                interactive: true
+            });
+
+            polygonSeries.set("heatRules", [{
+                target: polygonSeries.mapPolygons.template,
+                dataField: "value",
+                min: am5.color(0xf4c542),
+                max: am5.color(0xd94b43),
+                key: "fill"
+            }]);
+
+            polygonSeries.data.setAll(
+                Object.keys(counts).map(function(code) {
+                    return {
+                        id: code,
+                        value: counts[code]
+                    };
+                })
+            );
+
+            polygonSeries.appear(700);
+            chart.appear(700, 100);
+        }
+
+        createResearchMap();
 
 
         /* =========================================

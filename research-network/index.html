@@ -196,6 +196,51 @@
         .filter-stsm-host { background: #d94b43; color: #ffffff; }
         .clear-filters { background: #eeeeee; color: #444444; }
 
+        .wg-filters {
+            margin-top: -7px;
+        }
+
+        .filter-wg1 { background: #f4c542; color: #444444; }
+        .filter-wg2 { background: #eea13a; color: #ffffff; }
+        .filter-wg3 { background: #ee8a32; color: #ffffff; }
+        .filter-wg4 { background: #e85d2a; color: #ffffff; }
+        .filter-wg5 { background: #d94b43; color: #ffffff; }
+
+
+        /* =========================================
+           RESEARCH NETWORK MAP
+        ========================================= */
+
+        .network-map-section {
+            margin: 12px 0 32px;
+            padding: 20px;
+            background: #f7f7f7;
+            border-radius: 10px;
+        }
+
+        .network-map-section h2 {
+            margin: 0 0 4px;
+            font-size: 20px;
+            color: #222222;
+        }
+
+        .network-map-section p {
+            margin: 0 0 12px;
+            color: #666666;
+            font-size: 13px;
+        }
+
+        #research-map {
+            width: 100%;
+            height: 430px;
+        }
+
+        @media (max-width: 700px) {
+            #research-map {
+                height: 300px;
+            }
+        }
+
 
         #result-count {
             color: #777777;
@@ -533,8 +578,25 @@
             </button>
         </div>
 
+        <div class="filters wg-filters" aria-label="Working group filters">
+            <span class="filter-label">Filter by Working Group:</span>
+
+            <button type="button" class="filter-button filter-wg1" data-wg="WG1" aria-pressed="false">WG1</button>
+            <button type="button" class="filter-button filter-wg2" data-wg="WG2" aria-pressed="false">WG2</button>
+            <button type="button" class="filter-button filter-wg3" data-wg="WG3" aria-pressed="false">WG3</button>
+            <button type="button" class="filter-button filter-wg4" data-wg="WG4" aria-pressed="false">WG4</button>
+            <button type="button" class="filter-button filter-wg5" data-wg="WG5" aria-pressed="false">WG5</button>
+        </div>
+
 
         <p id="result-count"></p>
+
+
+        <section class="network-map-section" aria-labelledby="research-map-title">
+            <h2 id="research-map-title">Research network around the world</h2>
+            <p>Hover over a country to see how many researcher cards are represented.</p>
+            <div id="research-map" aria-label="World map showing the number of researchers by country"></div>
+        </section>
 
 
         <div id="people"></div>
@@ -546,6 +608,12 @@
     <!-- =========================================
          LOAD RESEARCHER DATA
     ========================================== -->
+
+
+    <!-- World map library -->
+    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/geodata/worldLow.js"></script>
 
     <script src="people.js"></script>
 
@@ -577,7 +645,12 @@
             document.getElementById("clear-filters");
 
 
+        const wgFilterButtons =
+            document.querySelectorAll(".filter-button[data-wg]");
+
+
         const activeFilters = new Set();
+        const activeWGFilters = new Set();
 
 
 
@@ -813,6 +886,90 @@
 
 };
 
+
+
+        /* =========================================
+           WORLD MAP - RESEARCHERS BY COUNTRY
+        ========================================== */
+
+        function createResearchMap() {
+
+            if (typeof am5 === "undefined" ||
+                typeof am5map === "undefined" ||
+                typeof am5geodata_worldLow === "undefined") {
+                return;
+            }
+
+            const counts = {};
+
+            researchers.forEach(function(person) {
+                let code = countryCodes[String(person.country || "").trim()];
+
+                if (!code) {
+                    return;
+                }
+
+                /* England, Scotland, Wales and Northern Ireland
+                   are shown together as the United Kingdom. */
+                if (code.indexOf("gb-") === 0) {
+                    code = "gb";
+                }
+
+                code = code.toUpperCase();
+                counts[code] = (counts[code] || 0) + 1;
+            });
+
+            const root = am5.Root.new("research-map");
+
+            const chart = root.container.children.push(
+                am5map.MapChart.new(root, {
+                    panX: "none",
+                    panY: "none",
+                    wheelX: "none",
+                    wheelY: "none",
+                    projection: am5map.geoNaturalEarth1()
+                })
+            );
+
+            const polygonSeries = chart.series.push(
+                am5map.MapPolygonSeries.new(root, {
+                    geoJSON: am5geodata_worldLow,
+                    exclude: ["AQ"],
+                    valueField: "value",
+                    calculateAggregates: true
+                })
+            );
+
+            polygonSeries.mapPolygons.template.setAll({
+                tooltipText: "{name}: {value} researcher cards",
+                fill: am5.color(0xdddddd),
+                stroke: am5.color(0xffffff),
+                strokeWidth: 0.7,
+                interactive: true
+            });
+
+            polygonSeries.set("heatRules", [{
+                target: polygonSeries.mapPolygons.template,
+                dataField: "value",
+                min: am5.color(0xf4c542),
+                max: am5.color(0xd94b43),
+                key: "fill"
+            }]);
+
+            polygonSeries.data.setAll(
+                Object.keys(counts).map(function(code) {
+                    return {
+                        id: code,
+                        value: counts[code]
+                    };
+                })
+            );
+
+            polygonSeries.appear(700);
+            chart.appear(700, 100);
+        }
+
+        createResearchMap();
 
 
         /* =========================================
@@ -1073,7 +1230,8 @@
                         person.role + " " +
                         person.institution + " " +
                         person.interests + " " +
-                        person.bio;
+                        person.bio + " " +
+                        (Array.isArray(person.workingGroups) ? person.workingGroups.join(" ") : "");
 
 
                     const matchesSearch =
@@ -1088,7 +1246,24 @@
                         });
 
 
-                    return matchesSearch && matchesFilters;
+                    const personWorkingGroups =
+                        Array.isArray(person.workingGroups)
+                            ? person.workingGroups.map(function(wg) {
+                                return String(wg).replace(/\s+/g, "").toUpperCase();
+                            })
+                            : [];
+
+
+                    /* If several WG buttons are selected, show people who
+                       belong to ANY of those selected working groups. */
+                    const matchesWorkingGroups =
+                        activeWGFilters.size === 0 ||
+                        Array.from(activeWGFilters).some(function(wg) {
+                            return personWorkingGroups.includes(wg);
+                        });
+
+
+                    return matchesSearch && matchesFilters && matchesWorkingGroups;
 
                 });
 
@@ -1124,11 +1299,38 @@
         });
 
 
+        wgFilterButtons.forEach(function(button) {
+
+            button.addEventListener("click", function() {
+
+                const wgName = button.dataset.wg;
+
+                if (activeWGFilters.has(wgName)) {
+                    activeWGFilters.delete(wgName);
+                    button.classList.remove("active");
+                    button.setAttribute("aria-pressed", "false");
+                } else {
+                    activeWGFilters.add(wgName);
+                    button.classList.add("active");
+                    button.setAttribute("aria-pressed", "true");
+                }
+
+                updateResults();
+            });
+        });
+
+
         clearFiltersButton.addEventListener("click", function() {
 
             activeFilters.clear();
+            activeWGFilters.clear();
 
             filterButtons.forEach(function(button) {
+                button.classList.remove("active");
+                button.setAttribute("aria-pressed", "false");
+            });
+
+            wgFilterButtons.forEach(function(button) {
                 button.classList.remove("active");
                 button.setAttribute("aria-pressed", "false");
             });
