@@ -151,6 +151,52 @@
         }
 
 
+        /* =========================================
+           OPPORTUNITY FILTERS
+        ========================================= */
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 7px;
+            margin: 4px 0 18px;
+        }
+
+        .filter-label {
+            margin-right: 4px;
+            color: #555555;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .filter-button {
+            border: 0;
+            padding: 7px 11px;
+            border-radius: 6px;
+            font-family: 'Satoshi', Arial, Helvetica, sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            opacity: 0.65;
+        }
+
+        .filter-button:hover,
+        .filter-button.active {
+            opacity: 1;
+        }
+
+        .filter-button.active {
+            box-shadow: 0 0 0 2px #444444;
+        }
+
+        .filter-mentor { background: #f4c542; color: #444444; }
+        .filter-mentee { background: #ee8a32; color: #ffffff; }
+        .filter-stsm-looking { background: #e85d2a; color: #ffffff; }
+        .filter-stsm-host { background: #d94b43; color: #ffffff; }
+        .clear-filters { background: #eeeeee; color: #444444; }
+
+
         #result-count {
             color: #777777;
 
@@ -389,21 +435,21 @@
 
                 display: block;
 
-                width: 180px;
+                width: 3600px;
 
-                max-width: 80%;
+                max-width: 100%;
 
                 margin: 0 auto 22px;
             }
 
 
             header h1 {
-                font-size: 30px;
+                font-size: 35px;
             }
 
 
             main {
-                padding: 0 15px;
+                padding: 0 18px;
             }
 
 
@@ -436,12 +482,12 @@
 
 
         <h1>
-            Research Network
+            RESEARCH NETWORK
         </h1>
 
 
         <p>
-            Find researchers, mentors and opportunities for collaboration.
+             Find researchers, mentors and opportunities for collaboration.
         </p>
 
 
@@ -454,12 +500,38 @@
 
     <main>
 
+<p> Welcome to our open directory of researchers, policy-makers, and practitioners working in or alongside the ANICIPATE team on challenges associated with multi-hazard risk and resilience. Anyone engaged with the field is welcome to add their bio by following this link (the webpage is updated every friday at 4pm). </p>
 
         <input
             id="search"
             type="search"
             placeholder="Search researchers..."
         >
+
+
+        <div class="filters" aria-label="Opportunity filters">
+            <span class="filter-label">Filter by opportunity:</span>
+
+            <button type="button" class="filter-button filter-mentor" data-filter="availableToMentor" aria-pressed="false">
+                Available to mentor
+            </button>
+
+            <button type="button" class="filter-button filter-mentee" data-filter="lookingForMentor" aria-pressed="false">
+                Looking for a mentor
+            </button>
+
+            <button type="button" class="filter-button filter-stsm-looking" data-filter="lookingForSTSM" aria-pressed="false">
+                Looking to do an STSM
+            </button>
+
+            <button type="button" class="filter-button filter-stsm-host" data-filter="availableToHostSTSM" aria-pressed="false">
+                Available to host an STSM
+            </button>
+
+            <button type="button" class="filter-button clear-filters" id="clear-filters">
+                Clear filters
+            </button>
+        </div>
 
 
         <p id="result-count"></p>
@@ -497,28 +569,249 @@
             document.getElementById("search");
 
 
+        const filterButtons =
+            document.querySelectorAll(".filter-button[data-filter]");
+
+
+        const clearFiltersButton =
+            document.getElementById("clear-filters");
+
+
+        const activeFilters = new Set();
+
+
 
         /* Country codes used for flag images */
 
         const countryCodes = {
 
-            "United Kingdom": "gb",
+    "Afghanistan": "af",
+    "Albania": "al",
+    "Algeria": "dz",
+    "Andorra": "ad",
+    "Angola": "ao",
+    "Antigua and Barbuda": "ag",
+    "Argentina": "ar",
+    "Armenia": "am",
+    "Australia": "au",
+    "Austria": "at",
+    "Azerbaijan": "az",
 
-            "Ireland": "ie",
+    "Bahamas": "bs",
+    "Bahrain": "bh",
+    "Bangladesh": "bd",
+    "Barbados": "bb",
+    "Belarus": "by",
+    "Belgium": "be",
+    "Belize": "bz",
+    "Benin": "bj",
+    "Bhutan": "bt",
+    "Bolivia": "bo",
+    "Bosnia and Herzegovina": "ba",
+    "Botswana": "bw",
+    "Brazil": "br",
+    "Brunei": "bn",
+    "Bulgaria": "bg",
+    "Burkina Faso": "bf",
+    "Burundi": "bi",
 
-            "India": "in",
+    "Cabo Verde": "cv",
+    "Cambodia": "kh",
+    "Cameroon": "cm",
+    "Canada": "ca",
+    "Central African Republic": "cf",
+    "Chad": "td",
+    "Chile": "cl",
+    "China": "cn",
+    "Colombia": "co",
+    "Comoros": "km",
+    "Congo": "cg",
+    "Costa Rica": "cr",
+    "Croatia": "hr",
+    "Cuba": "cu",
+    "Cyprus": "cy",
+    "Czech Republic": "cz",
+    "Czechia": "cz",
 
-            "France": "fr",
+    "Democratic Republic of the Congo": "cd",
+    "Denmark": "dk",
+    "Djibouti": "dj",
+    "Dominica": "dm",
+    "Dominican Republic": "do",
 
-            "Germany": "de",
+    "Ecuador": "ec",
+    "Egypt": "eg",
+    "El Salvador": "sv",
+    "Equatorial Guinea": "gq",
+    "Eritrea": "er",
+    "Estonia": "ee",
+    "Eswatini": "sz",
+    "Ethiopia": "et",
 
-            "Netherlands": "nl",
+    "Fiji": "fj",
+    "Finland": "fi",
+    "France": "fr",
 
-            "Spain": "es",
+    "Gabon": "ga",
+    "Gambia": "gm",
+    "Georgia": "ge",
+    "Germany": "de",
+    "Ghana": "gh",
+    "Greece": "gr",
+    "Grenada": "gd",
+    "Guatemala": "gt",
+    "Guinea": "gn",
+    "Guinea-Bissau": "gw",
+    "Guyana": "gy",
 
-            "Sweden": "se"
+    "Haiti": "ht",
+    "Honduras": "hn",
+    "Hungary": "hu",
 
-        };
+    "Iceland": "is",
+    "India": "in",
+    "Indonesia": "id",
+    "Iran": "ir",
+    "Iraq": "iq",
+    "Ireland": "ie",
+    "Israel": "il",
+    "Italy": "it",
+
+    "Ivory Coast": "ci",
+
+    "Jamaica": "jm",
+    "Japan": "jp",
+    "Jordan": "jo",
+
+    "Kazakhstan": "kz",
+    "Kenya": "ke",
+    "Kiribati": "ki",
+    "Kuwait": "kw",
+    "Kyrgyzstan": "kg",
+
+    "Laos": "la",
+    "Latvia": "lv",
+    "Lebanon": "lb",
+    "Lesotho": "ls",
+    "Liberia": "lr",
+    "Libya": "ly",
+    "Liechtenstein": "li",
+    "Lithuania": "lt",
+    "Luxembourg": "lu",
+
+    "Madagascar": "mg",
+    "Malawi": "mw",
+    "Malaysia": "my",
+    "Maldives": "mv",
+    "Mali": "ml",
+    "Malta": "mt",
+    "Marshall Islands": "mh",
+    "Mauritania": "mr",
+    "Mauritius": "mu",
+    "Mexico": "mx",
+    "Micronesia": "fm",
+    "Moldova": "md",
+    "Monaco": "mc",
+    "Mongolia": "mn",
+    "Montenegro": "me",
+    "Morocco": "ma",
+    "Mozambique": "mz",
+    "Myanmar": "mm",
+
+    "Namibia": "na",
+    "Nauru": "nr",
+    "Nepal": "np",
+    "Netherlands": "nl",
+    "New Zealand": "nz",
+    "Nicaragua": "ni",
+    "Niger": "ne",
+    "Nigeria": "ng",
+    "North Korea": "kp",
+    "North Macedonia": "mk",
+    "Norway": "no",
+
+    "Oman": "om",
+
+    "Pakistan": "pk",
+    "Palau": "pw",
+    "Palestine": "ps",
+    "Panama": "pa",
+    "Papua New Guinea": "pg",
+    "Paraguay": "py",
+    "Peru": "pe",
+    "Philippines": "ph",
+    "Poland": "pl",
+    "Portugal": "pt",
+
+    "Qatar": "qa",
+
+    "Romania": "ro",
+    "Russia": "ru",
+    "Rwanda": "rw",
+
+    "Saint Kitts and Nevis": "kn",
+    "Saint Lucia": "lc",
+    "Saint Vincent and the Grenadines": "vc",
+    "Samoa": "ws",
+    "San Marino": "sm",
+    "Sao Tome and Principe": "st",
+    "Saudi Arabia": "sa",
+    "Senegal": "sn",
+    "Serbia": "rs",
+    "Seychelles": "sc",
+    "Sierra Leone": "sl",
+    "Singapore": "sg",
+    "Slovakia": "sk",
+    "Slovenia": "si",
+    "Solomon Islands": "sb",
+    "Somalia": "so",
+    "South Africa": "za",
+    "South Korea": "kr",
+    "South Sudan": "ss",
+    "Spain": "es",
+    "Sri Lanka": "lk",
+    "Sudan": "sd",
+    "Suriname": "sr",
+    "Sweden": "se",
+    "Switzerland": "ch",
+    "Syria": "sy",
+
+    "Taiwan": "tw",
+    "Tajikistan": "tj",
+    "Tanzania": "tz",
+    "Thailand": "th",
+    "Timor-Leste": "tl",
+    "Togo": "tg",
+    "Tonga": "to",
+    "Trinidad and Tobago": "tt",
+    "Tunisia": "tn",
+    "Turkey": "tr",
+    "Türkiye": "tr",
+    "Turkmenistan": "tm",
+    "Tuvalu": "tv",
+
+    "Uganda": "ug",
+    "Ukraine": "ua",
+    "United Arab Emirates": "ae",
+    "United Kingdom": "gb",
+    "UK": "gb",
+    "United States": "us",
+    "United States of America": "us",
+    "USA": "us",
+    "Uruguay": "uy",
+    "Uzbekistan": "uz",
+
+    "Vanuatu": "vu",
+    "Vatican City": "va",
+    "Venezuela": "ve",
+    "Vietnam": "vn",
+
+    "Yemen": "ye",
+
+    "Zambia": "zm",
+    "Zimbabwe": "zw"
+
+};
 
 
 
@@ -762,75 +1055,87 @@
 
 
         /* =========================================
-           SEARCH
+           SEARCH + OPPORTUNITY FILTERS
         ========================================== */
+
+        function updateResults() {
+
+            const searchText =
+                searchBox.value.toLowerCase();
+
+
+            const results =
+                researchers.filter(function(person) {
+
+                    const information =
+                        person.name + " " +
+                        person.country + " " +
+                        person.role + " " +
+                        person.institution + " " +
+                        person.interests + " " +
+                        person.bio;
+
+
+                    const matchesSearch =
+                        information
+                            .toLowerCase()
+                            .includes(searchText);
+
+
+                    const matchesFilters =
+                        Array.from(activeFilters).every(function(filterName) {
+                            return person[filterName] === true;
+                        });
+
+
+                    return matchesSearch && matchesFilters;
+
+                });
+
+
+            displayPeople(results);
+        }
+
 
         searchBox.addEventListener(
             "input",
-            function() {
-
-
-                const searchText =
-
-                    searchBox
-                        .value
-                        .toLowerCase();
-
-
-
-                const results =
-
-                    researchers.filter(
-                        function(person) {
-
-
-                            const information =
-
-                                person.name +
-
-                                " " +
-
-                                person.country +
-
-                                " " +
-
-                                person.role +
-
-                                " " +
-
-                                person.institution +
-
-                                " " +
-
-                                person.interests +
-
-                                " " +
-
-                                person.bio;
-
-
-
-                            return information
-
-                                .toLowerCase()
-
-                                .includes(
-                                    searchText
-                                );
-
-
-                        }
-                    );
-
-
-
-                displayPeople(
-                    results
-                );
-
-
-            }
+            updateResults
         );
+
+
+        filterButtons.forEach(function(button) {
+
+            button.addEventListener("click", function() {
+
+                const filterName = button.dataset.filter;
+
+                if (activeFilters.has(filterName)) {
+                    activeFilters.delete(filterName);
+                    button.classList.remove("active");
+                    button.setAttribute("aria-pressed", "false");
+                } else {
+                    activeFilters.add(filterName);
+                    button.classList.add("active");
+                    button.setAttribute("aria-pressed", "true");
+                }
+
+                updateResults();
+            });
+        });
+
+
+        clearFiltersButton.addEventListener("click", function() {
+
+            activeFilters.clear();
+
+            filterButtons.forEach(function(button) {
+                button.classList.remove("active");
+                button.setAttribute("aria-pressed", "false");
+            });
+
+            updateResults();
+        });
+
 
 
     </script>
