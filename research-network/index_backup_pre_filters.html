@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Research Network</title>
+
+
+    <!-- Satoshi font -->
+
+    <link
+        href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,600,700&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <style>
+
+        /* =========================================
+           PAGE
+        ========================================= */
+
+        body {
+            margin: 0;
+
+            font-family:
+                'Satoshi',
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background: #ffffff;
+
+            color: #444444;
+        }
+
+
+        /* =========================================
+           HEADER
+        ========================================= */
+
+        header {
+            position: relative;
+
+            background: #000000;
+
+            color: #ffffff;
+
+            text-align: center;
+
+            padding: 42px 230px;
+
+            border-bottom: 8px solid #f4c542;
+        }
+
+
+        .header-logo {
+            position: absolute;
+
+            left: 30px;
+
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            width: 190px;
+
+            height: auto;
+        }
+
+
+        header h1 {
+            margin: 0 0 8px;
+
+            font-size: 38px;
+
+            font-weight: 700;
+        }
+
+
+        header p {
+            margin: 0;
+
+            color: #ffffff;
+
+            font-size: 17px;
+
+            font-weight: 400;
+        }
+
+
+        /* =========================================
+           MAIN CONTENT
+        ========================================= */
+
+        main {
+            max-width: 1100px;
+
+            margin: 35px auto;
+
+            padding: 0 20px;
+        }
+
+
+        /* =========================================
+           SEARCH
+        ========================================= */
+
+        #search {
+            width: 100%;
+
+            box-sizing: border-box;
+
+            padding: 13px 15px;
+
+            margin-bottom: 10px;
+
+            border: 2px solid #cccccc;
+
+            border-radius: 8px;
+
+            background: #ffffff;
+
+            color: #444444;
+
+            font-family:
+                'Satoshi',
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            font-size: 16px;
+        }
+
+
+        #search:focus {
+            outline: none;
+
+            border-color: #e85d2a;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(244, 197, 66, 0.35);
+        }
+
+
+        #result-count {
+            color: #777777;
+
+            margin-bottom: 25px;
+
+            font-size: 14px;
+        }
+
+
+        /* =========================================
+           RESEARCHER GRID
+        ========================================= */
+
+        #people {
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(260px, 1fr)
+                );
+
+            gap: 20px;
+        }
+
+
+        /* =========================================
+           RESEARCHER CARD
+        ========================================= */
+
+        .card {
+            background: #ffffff;
+
+            padding: 22px;
+
+            border: 1px solid #dddddd;
+
+            border-top: 5px solid #d94b43;
+
+            border-radius: 10px;
+
+            box-shadow:
+                0 3px 12px
+                rgba(0, 0, 0, 0.07);
+
+            transition:
+                transform 0.15s ease,
+                box-shadow 0.15s ease;
+        }
+
+
+        .card:hover {
+            transform: translateY(-3px);
+
+            box-shadow:
+                0 7px 18px
+                rgba(0, 0, 0, 0.11);
+        }
+
+
+        .card h2 {
+            margin: 0 0 7px;
+
+            color: #444444;
+
+            font-size: 21px;
+
+            font-weight: 700;
+        }
+
+
+        /* =========================================
+           COUNTRY + FLAG
+        ========================================= */
+
+        .country {
+            display: flex;
+
+            align-items: center;
+
+            color: #777777;
+
+            font-size: 13px;
+
+            margin-bottom: 12px;
+        }
+
+
+        .country-flag {
+            width: 24px;
+
+            height: auto;
+
+            margin-right: 7px;
+
+            border-radius: 2px;
+
+            box-shadow:
+                0 0 0 1px
+                rgba(0, 0, 0, 0.08);
+        }
+
+
+        /* =========================================
+           ROLE + INSTITUTION
+        ========================================= */
+
+        .role {
+            color: #777777;
+
+            font-size: 14px;
+
+            margin: 0 0 5px;
+
+            font-weight: 400;
+        }
+
+
+        .institution {
+            color: #444444;
+
+            font-weight: 600;
+
+            font-size: 14px;
+
+            margin: 0 0 14px;
+        }
+
+
+        /* =========================================
+           BIOGRAPHY
+        ========================================= */
+
+        .bio {
+            color: #555555;
+
+            font-size: 14px;
+
+            line-height: 1.55;
+        }
+
+
+        /* =========================================
+           OPPORTUNITY BADGES
+        ========================================= */
+
+        .badge {
+            display: inline-block;
+
+            padding: 6px 9px;
+
+            margin: 3px 3px 3px 0;
+
+            border-radius: 5px;
+
+            font-size: 12px;
+
+            font-weight: 600;
+        }
+
+
+        /* Available to mentor */
+
+        .mentor {
+            background: #f4c542;
+
+            color: #444444;
+        }
+
+
+        /* Looking for a mentor */
+
+        .mentee {
+            background: #ee8a32;
+
+            color: #ffffff;
+        }
+
+
+        /* Looking to do an STSM */
+
+        .stsm-looking {
+            background: #e85d2a;
+
+            color: #ffffff;
+        }
+
+
+        /* Available to host an STSM */
+
+        .stsm-host {
+            background: #d94b43;
+
+            color: #ffffff;
+        }
+
+
+        /* =========================================
+           RESEARCH INTEREST TAGS
+        ========================================= */
+
+        .tag {
+            display: inline-block;
+
+            background: #eeeeee;
+
+            color: #555555;
+
+            padding: 5px 8px;
+
+            margin: 3px 3px 0 0;
+
+            border-radius: 5px;
+
+            font-size: 12px;
+
+            font-weight: 500;
+        }
+
+
+        /* =========================================
+           MOBILE
+        ========================================= */
+
+        @media (max-width: 700px) {
+
+            header {
+                padding: 25px 15px 30px;
+            }
+
+
+            .header-logo {
+                position: static;
+
+                transform: none;
+
+                display: block;
+
+                width: 180px;
+
+                max-width: 80%;
+
+                margin: 0 auto 22px;
+            }
+
+
+            header h1 {
+                font-size: 30px;
+            }
+
+
+            main {
+                padding: 0 15px;
+            }
+
+
+            #people {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================================
+         HEADER
+    ========================================== -->
+
+    <header>
+
+
+        <img
+            src="anticipate-logo-bbcw.png"
+            alt="ANTICIPATE"
+            class="header-logo"
+        >
+
+
+        <h1>
+            Research Network
+        </h1>
+
+
+        <p>
+            Find researchers, mentors and opportunities for collaboration.
+        </p>
+
+
+    </header>
+
+
+    <!-- =========================================
+         MAIN
+    ========================================== -->
+
+    <main>
+
+
+        <input
+            id="search"
+            type="search"
+            placeholder="Search researchers..."
+        >
+
+
+        <p id="result-count"></p>
+
+
+        <div id="people"></div>
+
+
+    </main>
+
+
+    <!-- =========================================
+         LOAD RESEARCHER DATA
+    ========================================== -->
+
+    <script src="people.js"></script>
+
+
+    <!-- =========================================
+         JAVASCRIPT
+    ========================================== -->
+
+    <script>
+
+
+        const peopleContainer =
+            document.getElementById("people");
+
+
+        const resultCount =
+            document.getElementById("result-count");
+
+
+        const searchBox =
+            document.getElementById("search");
+
+
+
+        /* Country codes used for flag images */
+
+        const countryCodes = {
+
+            "United Kingdom": "gb",
+
+            "Ireland": "ie",
+
+            "India": "in",
+
+            "France": "fr",
+
+            "Germany": "de",
+
+            "Netherlands": "nl",
+
+            "Spain": "es",
+
+            "Sweden": "se"
+
+        };
+
+
+
+        /* =========================================
+           DISPLAY RESEARCHERS
+        ========================================== */
+
+        function displayPeople(list) {
+
+
+            peopleContainer.innerHTML = "";
+
+
+            resultCount.textContent =
+
+                list.length +
+
+                (
+                    list.length === 1
+                        ? " researcher"
+                        : " researchers"
+                );
+
+
+
+            list.forEach(function(person) {
+
+
+                const card =
+                    document.createElement("article");
+
+
+                card.className = "card";
+
+
+
+                /* OPPORTUNITY BADGES */
+
+                let badges = "";
+
+
+                if (person.availableToMentor) {
+
+                    badges +=
+
+                        '<span class="badge mentor">' +
+
+                        'Available to mentor' +
+
+                        '</span>';
+
+                }
+
+
+                if (person.lookingForMentor) {
+
+                    badges +=
+
+                        '<span class="badge mentee">' +
+
+                        'Looking for a mentor' +
+
+                        '</span>';
+
+                }
+
+
+                if (person.lookingForSTSM) {
+
+                    badges +=
+
+                        '<span class="badge stsm-looking">' +
+
+                        'Looking to do an STSM' +
+
+                        '</span>';
+
+                }
+
+
+                if (person.availableToHostSTSM) {
+
+                    badges +=
+
+                        '<span class="badge stsm-host">' +
+
+                        'Available to host an STSM' +
+
+                        '</span>';
+
+                }
+
+
+
+                /* RESEARCH INTERESTS */
+
+                let interests = "";
+
+
+                if (person.interests) {
+
+                    person.interests
+                        .split(";")
+                        .forEach(function(interest) {
+
+
+                            interests +=
+
+                                '<span class="tag">' +
+
+                                interest.trim() +
+
+                                '</span>';
+
+
+                        });
+
+                }
+
+
+
+                /* COUNTRY FLAG */
+
+                const code =
+                    countryCodes[person.country];
+
+
+                let countryDisplay =
+                    person.country || "";
+
+
+                if (code) {
+
+
+                    countryDisplay =
+
+                        '<img ' +
+
+                            'class="country-flag" ' +
+
+                            'src="https://flagcdn.com/w40/' +
+
+                            code +
+
+                            '.png" ' +
+
+                            'alt="' +
+
+                            person.country +
+
+                            ' flag" ' +
+
+                            'onerror="this.style.display=\'none\'"' +
+
+                        '>' +
+
+                        '<span>' +
+
+                            person.country +
+
+                        '</span>';
+
+
+                }
+
+
+
+                /* BUILD CARD */
+
+                card.innerHTML =
+
+
+                    '<h2>' +
+
+                        person.name +
+
+                    '</h2>' +
+
+
+                    '<div class="country">' +
+
+                        countryDisplay +
+
+                    '</div>' +
+
+
+                    '<p class="role">' +
+
+                        person.role +
+
+                    '</p>' +
+
+
+                    '<p class="institution">' +
+
+                        person.institution +
+
+                    '</p>' +
+
+
+                    '<div>' +
+
+                        badges +
+
+                    '</div>' +
+
+
+                    '<p class="bio">' +
+
+                        person.bio +
+
+                    '</p>' +
+
+
+                    '<div>' +
+
+                        interests +
+
+                    '</div>';
+
+
+
+                peopleContainer.appendChild(
+                    card
+                );
+
+
+            });
+
+
+        }
+
+
+
+        /* Display everybody initially */
+
+        displayPeople(
+            researchers
+        );
+
+
+
+        /* =========================================
+           SEARCH
+        ========================================== */
+
+        searchBox.addEventListener(
+            "input",
+            function() {
+
+
+                const searchText =
+
+                    searchBox
+                        .value
+                        .toLowerCase();
+
+
+
+                const results =
+
+                    researchers.filter(
+                        function(person) {
+
+
+                            const information =
+
+                                person.name +
+
+                                " " +
+
+                                person.country +
+
+                                " " +
+
+                                person.role +
+
+                                " " +
+
+                                person.institution +
+
+                                " " +
+
+                                person.interests +
+
+                                " " +
+
+                                person.bio;
+
+
+
+                            return information
+
+                                .toLowerCase()
+
+                                .includes(
+                                    searchText
+                                );
+
+
+                        }
+                    );
+
+
+
+                displayPeople(
+                    results
+                );
+
+
+            }
+        );
+
+
+    </script>
+
+
+</body>
+
+</html>
